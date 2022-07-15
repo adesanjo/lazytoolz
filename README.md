@@ -1,4 +1,4 @@
-# Lazy programming for Python
+# Lazy Toolz
 
 ```
 pip install lazytools
@@ -19,6 +19,8 @@ allNumbers = myList + myNumbers + myRange
 
 print(allNumbers.drop(2).map(lambda x: x ** 2).filter(lambda x: x % 3 == 0).take(10))
 ```
+
+Output:
 
 ```
 LazyList(9, 36, 81, 144, 225, 324, 441, 576, 729, 900)
