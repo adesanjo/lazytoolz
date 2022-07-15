@@ -4,4 +4,8 @@
 pip install lazytools
 ```
 
-This package adds lazily evaluated constructs.
+This package adds lazily evaluated immutable objects.
+
+```python
+from lazytoolz import LazyList
+```
