@@ -11,59 +11,62 @@ class LazyList(Iterable, Generic[T]):
     Lazily evaluated immutable iterable object to which a number of transformations can be applied.
     """
     def __init__(self, *iterables: Iterable[T] | T):
-        if len(iterables) == 1:
+        if len(iterables) == 0:
+            self._iterables: tuple[T, ...] = tuple()
+        elif len(iterables) == 1:
             if isinstance(iterables[0], Iterable):
                 self._iterable = iterables[0]
             else:
                 self._iterable = iterables
         else:
-            def inner(iterables: tuple[Iterable[T] | T, ...]) -> Generator[T]:
-                for iterable in iterables:
-                    if isinstance(iterable, Iterable):
-                        for el in iterable:
-                            yield el
-                    else:
-                        yield iterable
-            self._iterable = inner(iterables)
+            self._iterable = LazyList(iterables[0])
+            for iterable in iterables[1:]:
+                self._iterable = self._iterable.concat(LazyList(iterable))
     
     @classmethod
-    def naturals(cls) -> LazyList[int]:
+    def naturals(cls, n: int | None = None) -> LazyList[int]:
         """
         Increasing sequence of natural numbers starting from 0.
         """
-        def inner() -> Generator[int]:
-            value = 0
-            while True:
-                yield value
-                value += 1
-        return LazyList(tee(inner())[1])
+        def inner(n: int | None) -> Generator[int]:
+            if n is None:
+                value = 0
+                while True:
+                    yield value
+                    value += 1
+            else:
+                for i in range(n):
+                    yield i
+        return LazyList(tee(inner(n))[1])
     
     @classmethod
     def repeat(cls, value: T, n: int | None = None) -> LazyList[T]:
         """
-        Repeat a value n times. If n is None, the value will be repeated infinitely.
+        Repeat a value n times or infinitely.
         """
         def inner(value: T, n: int | None) -> Generator[T]:
-            i = 0
-            while n is None or i < n:
-                i += 1
-                yield value
+            if n is None:
+                while True:
+                    yield value
+            else:
+                for _ in range(n):
+                    yield value
         return LazyList(tee(inner(value, n))[1])
     
     def cycle(self, n: int | None = None) -> LazyList[T]:
         """
-        Cycle through a LazyList n times. If n is None, the LazyList will be cycled through infinitely.
+        Cycle through a LazyList n times or infinitely.
         """
         def inner(lazyList: LazyList[T], n: int | None) -> Generator[T]:
-            i = 0
-            while n is None or i < n:
-                i += 1
-                for el in lazyList:
-                    yield el
+            if n is None:
+                while True:
+                    for el in lazyList:
+                        yield el
+            else:
+                for _ in range(n):
+                    for el in lazyList:
+                        yield el
         return LazyList(tee(inner(self, n))[1])
-    
-    def __mul__(self, n: int) -> LazyList[T]:
-        return self.cycle(n)
     
     def take(self, n: int) -> LazyList[T]:
         """
