@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+src/lazytoolz/__init__.py
+src/lazytoolz/lazylist.py
+src/lazytoolz.egg-info/PKG-INFO
+src/lazytoolz.egg-info/SOURCES.txt
+src/lazytoolz.egg-info/dependency_links.txt
+src/lazytoolz.egg-info/requires.txt
+src/lazytoolz.egg-info/top_level.txt

@@ -67,7 +67,7 @@ class LazyList(Iterable, Generic[T]):
         return LazyList(tee(inner(n, self))[1])
 
     def map(self, f: Callable[[T], T1]) -> LazyList[T1]:
-        return LazyList(tee([print(el), f(el)][1] for el in self)[1])
+        return LazyList(tee(f(el) for el in self)[1])
     
     def filter(self, f: Callable[[T], bool]) -> LazyList[T]:
         return LazyList(tee(el for el in self if f(el))[1])
