@@ -98,6 +98,17 @@ class LazyList(Iterable, Generic[T]):
             pass
         return True
     
+    def concat(self, other: LazyList[T]) -> LazyList[T]:
+        def inner(lla: LazyList[T], llb: LazyList[T]) -> Generator[T]:
+            for el in lla:
+                yield el
+            for el in llb:
+                yield el
+        return LazyList(tee(inner(self, other))[1])
+    
+    def __add__(self, other: LazyList[T]) -> LazyList[T]:
+        return self.extend(other)
+    
     def __iter__(self) -> _LazyListIterator[T]:
         return _LazyListIterator(self)
     
