@@ -7,6 +7,9 @@ T = TypeVar("T")
 T1 = TypeVar("T1")
 
 class LazyList(Iterable, Generic[T]):
+    """
+    Lazily evaluated immutable iterable object to which a number of transformations can be applied.
+    """
     def __init__(self, *iterables: Iterable[T] | T):
         if len(iterables) == 1:
             if isinstance(iterables[0], Iterable):
@@ -25,6 +28,9 @@ class LazyList(Iterable, Generic[T]):
     
     @classmethod
     def naturals(cls) -> LazyList[int]:
+        """
+        Increasing sequence of natural numbers starting from 0.
+        """
         def inner() -> Generator[int]:
             value = 0
             while True:
@@ -34,6 +40,9 @@ class LazyList(Iterable, Generic[T]):
     
     @classmethod
     def repeat(cls, value: T, n: int | None = None) -> LazyList[T]:
+        """
+        Repeat a value n times. If n is None, the value will be repeated infinitely.
+        """
         def inner(value: T, n: int | None) -> Generator[T]:
             i = 0
             while n is None or i < n:
@@ -42,6 +51,9 @@ class LazyList(Iterable, Generic[T]):
         return LazyList(tee(inner(value, n))[1])
     
     def cycle(self, n: int | None = None) -> LazyList[T]:
+        """
+        Cycle through a LazyList n times. If n is None, the LazyList will be cycled through infinitely.
+        """
         def inner(lazyList: LazyList[T], n: int | None) -> Generator[T]:
             i = 0
             while n is None or i < n:
@@ -54,6 +66,9 @@ class LazyList(Iterable, Generic[T]):
         return self.cycle(n)
     
     def take(self, n: int) -> LazyList[T]:
+        """
+        Returns a LazyList with the n first items.
+        """
         def inner( n: int, lazyList: LazyList[T]) -> Generator[T]:
             i = n
             for el in lazyList:
@@ -64,6 +79,9 @@ class LazyList(Iterable, Generic[T]):
         return LazyList(tee(inner(n, self))[1])
     
     def drop(self, n: int) -> LazyList[T]:
+        """
+        Returns a LazyList without the n first items.
+        """
         def inner(n: int, lazyList: LazyList[T]) -> Generator[T]:
             i = n
             for el in lazyList:
@@ -74,12 +92,21 @@ class LazyList(Iterable, Generic[T]):
         return LazyList(tee(inner(n, self))[1])
 
     def map(self, f: Callable[[T], T1]) -> LazyList[T1]:
+        """
+        Returns a LazyList with a function applied to all elements.
+        """
         return LazyList(tee(f(el) for el in self)[1])
     
     def filter(self, f: Callable[[T], bool]) -> LazyList[T]:
+        """
+        Returns a LazyList containing only the elements for which a function returns True.
+        """
         return LazyList(tee(el for el in self if f(el))[1])
     
     def reduce(self, f: Callable[[T, T], T], start: T | None = None) -> T | None:
+        """
+        Reduces an entire LazyList down to a single value using the supplied function. If applied on an infinite LazyList, this will loop infinitely and never return.
+        """
         acc = start
         it = tee(self)[1]
         try:
@@ -106,6 +133,9 @@ class LazyList(Iterable, Generic[T]):
         return True
     
     def concat(self, other: LazyList[T]) -> LazyList[T]:
+        """
+        Concatenates two LazyLists.
+        """
         def inner(lla: LazyList[T], llb: LazyList[T]) -> Generator[T]:
             for el in lla:
                 yield el
