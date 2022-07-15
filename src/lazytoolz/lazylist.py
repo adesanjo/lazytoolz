@@ -12,12 +12,12 @@ class LazyList(Iterable, Generic[T]):
     """
     def __init__(self, *iterables: Iterable[T] | T):
         if len(iterables) == 0:
-            self._iterables: tuple[T, ...] = tuple()
+            self._iterable: Iterable[T] = tuple()
         elif len(iterables) == 1:
             if isinstance(iterables[0], Iterable):
                 self._iterable = iterables[0]
             else:
-                self._iterable = iterables
+                self._iterable = LazyList(iterables[0])
         else:
             self._iterable = LazyList(iterables[0])
             for iterable in iterables[1:]:
