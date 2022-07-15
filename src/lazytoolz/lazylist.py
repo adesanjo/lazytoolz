@@ -33,18 +33,25 @@ class LazyList(Iterable, Generic[T]):
         return LazyList(tee(inner())[1])
     
     @classmethod
-    def repeat(cls, value: T) -> LazyList[T]:
-        def inner(value: T) -> Generator[T]:
-            while True:
+    def repeat(cls, value: T, n: int | None = None) -> LazyList[T]:
+        def inner(value: T, n: int | None) -> Generator[T]:
+            i = 0
+            while n is None or i < n:
+                i += 1
                 yield value
-        return LazyList(tee(inner(value))[1])
+        return LazyList(tee(inner(value, n))[1])
     
-    def cycle(self) -> LazyList[T]:
-        def inner(lazyList: LazyList[T]) -> Generator[T]:
-            while True:
+    def cycle(self, n: int | None = None) -> LazyList[T]:
+        def inner(lazyList: LazyList[T], n: int | None) -> Generator[T]:
+            i = 0
+            while n is None or i < n:
+                i += 1
                 for el in lazyList:
                     yield el
-        return LazyList(tee(inner(self))[1])
+        return LazyList(tee(inner(self, n))[1])
+    
+    def __mul__(self, n: int) -> LazyList[T]:
+        return self.cycle(n)
     
     def take(self, n: int) -> LazyList[T]:
         def inner( n: int, lazyList: LazyList[T]) -> Generator[T]:
