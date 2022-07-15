@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TypeVar, Generic, Callable, Iterable, Iterator, Generator
+from typing import TypeVar, Generic, Callable, Iterable, Iterator, Generator, Any
 
 from itertools import tee
 
@@ -28,7 +28,7 @@ class LazyList(Iterable, Generic[T]):
         """
         Increasing sequence of natural numbers starting from 0.
         """
-        def inner(n: int | None) -> Generator[int]:
+        def inner(n: int | None) -> Generator[int, Any, Any]:
             if n is None:
                 value = 0
                 while True:
@@ -44,7 +44,7 @@ class LazyList(Iterable, Generic[T]):
         """
         Repeat a value n times or infinitely.
         """
-        def inner(value: T, n: int | None) -> Generator[T]:
+        def inner(value: T, n: int | None) -> Generator[T, Any, Any]:
             if n is None:
                 while True:
                     yield value
@@ -57,7 +57,7 @@ class LazyList(Iterable, Generic[T]):
         """
         Cycle through a LazyList n times or infinitely.
         """
-        def inner(lazyList: LazyList[T], n: int | None) -> Generator[T]:
+        def inner(lazyList: LazyList[T], n: int | None) -> Generator[T, Any, Any]:
             if n is None:
                 while True:
                     for el in lazyList:
@@ -72,7 +72,7 @@ class LazyList(Iterable, Generic[T]):
         """
         Returns a LazyList with the n first items.
         """
-        def inner( n: int, lazyList: LazyList[T]) -> Generator[T]:
+        def inner( n: int, lazyList: LazyList[T]) -> Generator[T, Any, Any]:
             i = n
             for el in lazyList:
                 if i <= 0:
@@ -85,7 +85,7 @@ class LazyList(Iterable, Generic[T]):
         """
         Returns a LazyList without the n first items.
         """
-        def inner(n: int, lazyList: LazyList[T]) -> Generator[T]:
+        def inner(n: int, lazyList: LazyList[T]) -> Generator[T, Any, Any]:
             i = n
             for el in lazyList:
                 if i > 0:
@@ -110,17 +110,21 @@ class LazyList(Iterable, Generic[T]):
         """
         Reduces an entire LazyList down to a single value using the supplied function. If applied on an infinite LazyList, this will loop infinitely and never return.
         """
-        acc = start
         it = tee(self)[1]
-        try:
-            acc = next(it)
-        except StopIteration:
-            return acc
+        if start is None:
+            try:
+                acc = next(it)
+            except StopIteration:
+                return start
+        else:
+            acc = start
         for el in it:
             acc = f(acc, el)
         return acc
     
-    def __eq__(self, other: LazyList[T]) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, LazyList):
+            raise TypeError()
         it = iter(other)
         for el in self:
             try:
@@ -139,7 +143,7 @@ class LazyList(Iterable, Generic[T]):
         """
         Concatenates two LazyLists.
         """
-        def inner(lla: LazyList[T], llb: LazyList[T]) -> Generator[T]:
+        def inner(lla: LazyList[T], llb: LazyList[T]) -> Generator[T, Any, Any]:
             for el in lla:
                 yield el
             for el in llb:
@@ -147,7 +151,7 @@ class LazyList(Iterable, Generic[T]):
         return LazyList(tee(inner(self, other))[1])
     
     def __add__(self, other: LazyList[T]) -> LazyList[T]:
-        return self.extend(other)
+        return self.concat(other)
     
     def __iter__(self) -> _LazyListIterator[T]:
         return _LazyListIterator(self)
