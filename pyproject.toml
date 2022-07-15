@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lazytoolz"
+version = "0.1.0"
+description = "Tools for lazy programming in Python"
+readme = "README.md"
+authors = [{ name = "adesanjo", email = "adriandesanjoselopez@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["lazy", "tool", "tools", "toolz", "lazytoolz", "lazylist"]
+dependencies = []
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = []
+
+[project.urls]
+Homepage = "https://github.com/adesanjo/lazytoolz"

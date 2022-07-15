@@ -1,7 +1,7 @@
-# Lazy functional programming for Python
+# Lazy programming for Python
 
-<!-- ```
-pip install func
-``` -->
+```
+pip install lazytools
+```
 
-This package adds lazily evaluated functional constructs.
+This package adds lazily evaluated constructs.
