@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: lazytoolz
-Version: 0.1.1
+Version: 0.1.2
 Summary: Tools for lazy programming in Python
 Author-email: adesanjo <adriandesanjoselopez@gmail.com>
 License: MIT License
@@ -40,4 +40,8 @@ License-File: LICENSE
 pip install lazytools
 ```
 
-This package adds lazily evaluated constructs.
+This package adds lazily evaluated immutable objects.
+
+```python
+from lazytoolz import LazyList
+```
