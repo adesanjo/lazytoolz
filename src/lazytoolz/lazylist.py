@@ -17,7 +17,7 @@ class LazyList(Iterable, Generic[T]):
             if isinstance(iterables[0], Iterable):
                 self._iterable = iterables[0]
             else:
-                self._iterable = LazyList(iterables[0])
+                self._iterable = (iterables[0],)
         else:
             self._iterable = LazyList(iterables[0])
             for iterable in iterables[1:]:

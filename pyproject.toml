@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lazytoolz"
-version = "0.1.5"
+version = "0.1.6"
 description = "Tools for lazy programming in Python"
 readme = "README.md"
-authors = [{ name = "adesanjo", email = "adriandesanjoselopez@gmail.com" }]
+authors = [{ name = "adesanjo"}]
 license = { file = "LICENSE" }
 classifiers = [
     "License :: OSI Approved :: MIT License",
