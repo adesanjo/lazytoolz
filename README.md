@@ -1,8 +1,10 @@
-# Lazy programming for Python
+# Lazy Toolz
 
 ```
 pip install lazytools
 ```
+
+## Examples
 
 This package adds lazily evaluated immutable objects.
 
