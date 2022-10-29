@@ -108,7 +108,8 @@ class LazyList(Iterable, Generic[T]):
     
     def reduce(self, f: Callable[[T, T], T], start: T | None = None) -> T | None:
         """
-        Reduces an entire LazyList down to a single value using the supplied function. If applied on an infinite LazyList, this will loop infinitely and never return.
+        Reduces an entire LazyList down to a single value using the supplied function.
+        If applied on an infinite LazyList, this will loop infinitely and never return.
         """
         it = tee(self)[1]
         if start is None:
